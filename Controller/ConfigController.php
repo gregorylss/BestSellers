@@ -15,7 +15,6 @@ namespace BestSellers\Controller;
 use BestSellers\BestSellers;
 use BestSellers\Form\Configuration;
 use ClassicRide\ClassicRide;
-use Symfony\Component\HttpFoundation\RequestStack;
 use Thelia\Controller\Admin\BaseAdminController;
 use Thelia\Core\Translation\Translator;
 use Thelia\Form\Exception\FormValidationException;
@@ -25,24 +24,69 @@ class ConfigController extends BaseAdminController
     public function setAction()
     {
         $form = $this->createForm(Configuration::getName());
-        $response = null;
 
         try {
             $configForm = $this->validateForm($form);
-            $data = $configForm->get('order')->getData();
+            $orderData = $configForm->get('order')->getData();
+            $formData = $configForm->all();
+            $startDateForm = $formData['start_date'];
+            $endDateForm = $formData['end_date'];
+            $dateRangeForm = $formData['date_range'];
+            $dateType = $formData['date_type'];
 
-            BestSellers::setConfigValue('order_types', $data, null, true);
+            $date_range = $dateRangeForm->getData();
 
-            $response = $this->render(
-                'module-configure',
-                ['module_code' => 'BestSellers']
-            );
+            if ($startDate = $startDateForm->getData()) {
+                $startDate = $startDate->format('Y-m-d');
+            }
+            if ($endDate = $endDateForm->getData()) {
+                $endDate = $endDate->format('Y-m-d');
+            }
+
+            $dateType = $dateType->getData();
+
+            if ($startDate !== null) {
+                BestSellers::setConfigValue(
+                    'start_date',
+                    $startDate,
+                );
+            }
+
+            if ($endDate !== null) {
+                BestSellers::setConfigValue(
+                    'end_date',
+                    $endDate,
+                );
+            }
+
+            if ($orderData !== null) {
+                BestSellers::setConfigValue(
+                    'order_types',
+                    $orderData,
+                );
+            }
+
+            if ($date_range !== null) {
+                BestSellers::setConfigValue(
+                    'date_range',
+                    $date_range,
+                );
+            }
+
+            if ($dateType !== null) {
+                BestSellers::setConfigValue(
+                    'date_type',
+                    $dateType,
+                );
+            }
+
+            $response = $this->redirectAction();
+
         } catch (FormValidationException $e) {
             $this->setupFormErrorContext(
                 Translator::getInstance()->trans(
                     'Error',
                     [],
-                    ClassicRide::DOMAIN_NAME
                 ),
                 $e->getMessage(),
                 $form
@@ -54,15 +98,17 @@ class ConfigController extends BaseAdminController
                 Translator::getInstance()->trans(
                     'Error',
                     [],
-                    ClassicRide::DOMAIN_NAME
                 ),
                 $e->getMessage(),
                 $form
             );
-
             return $this->generateSuccessRedirect($form);
         }
 
         return $response;
+    }
+    public function redirectAction()
+    {
+        return $this->generateRedirectFromRoute('admin.module.configure', [], ['module_code' => 'BestSellers']);
     }
 }

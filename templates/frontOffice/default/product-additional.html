@@ -17,8 +17,7 @@
 
             {if $padWithRandomProducts && $productCount < $maxProducts}
                 {loop type="product" name="other-products" limit={$maxProducts - $productCount} category=$DEFAULT_CATEGORY order="random" exclude=$exclude_list}
-                    {include file="components/smarty/SingleProduct/SingleProduct.html" product_id=$ID}
-                {/loop}
+            {include file="includes/single-product.html" product_id=$ID hasBtn=true hasDescription=false hasQuickView=false width="218" height="146"}                {/loop}
             {/if}
         </ul>
     </div>

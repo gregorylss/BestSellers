@@ -26,4 +26,9 @@ return array(
     'View' => 'Afficher',
     'View from : ' => 'Afficher de : ',
     'You have not sold any products yet' => 'Aucun produit vendu pour le moment.',
+    'Choose a date type : ' => 'Choisissez un type de date : ',
+    'Choose a date range : ' => 'Choisissez une période : ',
+    'Choose a start date : ' => 'Choisissez une date de début : ',
+    'Choose an end date : ' => 'Choisissez une date de fin : ',
+    'Set' => 'Valider',
 );

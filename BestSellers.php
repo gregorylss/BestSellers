@@ -35,6 +35,20 @@ class BestSellers extends BaseModule
     /* Data cache lifetime in minutes */
     const CACHE_LIFETIME_IN_MINUTES = 1440;
 
+    const LAST_15_DAYS = 'last_15_days';
+
+    const LAST_30_DAYS = 'last_30_days';
+
+    const LAST_6_MONTHS = 'last_6_months';
+
+    const LAST_YEAR = 'last_year';
+
+    const THIS_YEAR = 'this_year';
+
+    const FIXED_DATE = 1;
+
+    const DATE_RANGE = 2;
+
     public function postActivation(ConnectionInterface $con = null): void
     {
         self::setConfigValue('order_types', '2,3,4');
