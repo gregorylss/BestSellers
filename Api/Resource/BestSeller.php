@@ -60,15 +60,6 @@ use Symfony\Component\Serializer\Annotation\Groups;
                         'description' => 'Alias pour limit - Nombre maximum de résultats'
                     ],
                     [
-                        'name' => 'offset',
-                        'in' => 'query',
-                        'required' => false,
-                        'schema' => [
-                            'type' => 'integer'
-                        ],
-                        'description' => 'Décalage pour la pagination'
-                    ],
-                    [
                         'name' => 'page',
                         'in' => 'query',
                         'required' => false,

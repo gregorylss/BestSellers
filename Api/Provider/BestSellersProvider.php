@@ -30,19 +30,19 @@ class BestSellersProvider implements ProviderInterface
 
     public function provide(Operation $operation, array $uriVariables = [], array $context = []): array|object|null
     {
-        // Vérifie si on demande les produits achetés ensemble
+        $itemsPerPage = $context['filters']['itemsPerPage'] ?? $context['filters']['limit'] ?? BestSellers::getConfigValue('limit') ?? 10;
+
+        $page = isset($context['filters']['page']) ? (int)$context['filters']['page'] : 1;
+        $offset = ($page - 1) * $itemsPerPage;
+
         if (!empty($context['filters']['product_ref'])) {
-            return $this->providePurchasedWith($context['filters']['product_ref'], $context);
+            return $this->providePurchasedWith($context['filters']['product_ref'], $context, $itemsPerPage, $offset);
         }
 
-        // Sinon fournit les meilleurs vendeurs (code existant)
         $query = $this->buildModelCriteria();
 
-        $limit = BestSellers::getConfigValue('limit') ?? 10;
-        $offset = BestSellers::getConfigValue('offset') ?? 0;
-
         $query
-            ->limit($limit)
+            ->limit($itemsPerPage)
             ->offset($offset);
 
         $products = $query->find();
@@ -179,12 +179,9 @@ class BestSellersProvider implements ProviderInterface
     /**
      * Fournit les produits achetés avec un produit spécifié
      */
-    private function providePurchasedWith(string $productRef, array $context = []): array
+    private function providePurchasedWith(string $productRef, array $context = [], int $limit = 10, int $offset = 0): array
     {
         $query = $this->buildPurchasedWithCriteria($productRef, $context);
-
-        $limit = $context['filters']['itemsPerPage'] ?? $context['filters']['limit'] ?? BestSellers::getConfigValue('limit') ?? 10;
-        $offset = $context['filters']['offset'] ?? BestSellers::getConfigValue('offset') ?? 0;
 
         $query
             ->limit($limit)
